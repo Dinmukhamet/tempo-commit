@@ -10,10 +10,19 @@ from src.services.jira_client import JIRAClient
 from src.services.tempo_client import TempoAPIClient
 
 
-def get_last_commit_datetime() -> Optional[datetime]:
+def get_issue_key_and_message_from_commit(message: str):
+    jira_issue, commit_msg = message.split(" ", 1)
+    _, commit_msg = commit_msg.split(": ", 1)
+    return jira_issue, commit_msg
+
+
+def get_last_commit_datetime(issue_key: str) -> Optional[datetime]:
     try:
         repo = Repo(search_parent_directories=True)
         last_commit = repo.head.commit
+        commit_issue_key, _ = get_issue_key_and_message_from_commit(last_commit.message)
+        if commit_issue_key != issue_key:
+            return None
         return last_commit.committed_datetime
     except Exception as e:
         logger.error(f"Error: {e}")
@@ -43,8 +52,7 @@ async def commit_and_add_worklog(message: str):
         logger.error("Invalid commit message format. Commit aborted.")
         sys.exit(1)
 
-    jira_issue, commit_msg = message.split(" ", 1)
-    _, commit_msg = commit_msg.split(": ", 1)
+    jira_issue, commit_msg = get_issue_key_and_message_from_commit(message)
 
     jira = JIRAClient()
     tempo = TempoAPIClient()
