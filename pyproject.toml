@@ -1,13 +1,12 @@
 [tool.poetry]
 name = "tempo-commit"
-version = "0.1.0"
+version = "0.1.1"
 description = "A cli tool to add a worklog to Tempo on commit"
 authors = ["Dinmukhamet Igissinov <igissinov.d@gmail.com>"]
-readme = "README.md"
 packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.9"
 httpx = "^0.26.0"
 jira = {extras = ["cli"], version = "^3.6.0"}
 pydantic-settings = "^2.1.0"
