@@ -7,13 +7,11 @@ packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-httpx = "^0.26.0"
 jira = {extras = ["cli"], version = "^3.6.0"}
-pydantic-settings = "^2.1.0"
-aiofiles = "^23.2.1"
 asyncclick = "^8.1.7.1"
 gitpython = "^3.1.41"
 loguru = "^0.7.2"
+python-dotenv = "0.20.0"
 
 
 [tool.poetry.group.dev.dependencies]

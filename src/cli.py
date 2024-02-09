@@ -1,6 +1,4 @@
-import aiofiles
 import asyncclick as click
-from loguru import logger
 from src.config import BASE_DIR
 
 
@@ -30,10 +28,8 @@ from src.config import BASE_DIR
     help="Generate and enter your Tempo API token (Read more: https://help.tempo.io/cloud/en/tempo-planner/developing-with-tempo/using-rest-api-integrations.html)'",
 )
 async def init(**kwargs):
-    async with aiofiles.open(BASE_DIR / ".env", "w") as f:
-        await f.writelines(
-            [f"{field.upper()}={value}\n" for field, value in kwargs.items()]
-        )
+    with open(BASE_DIR / ".env", "w") as f:
+        f.writelines([f"{field.upper()}={value}\n" for field, value in kwargs.items()])
 
 
 @click.command()

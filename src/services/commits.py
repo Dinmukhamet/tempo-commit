@@ -46,7 +46,7 @@ def seconds_to_string(seconds):
     return f"{hours}h {minutes}m {seconds}s"
 
 
-async def commit_and_add_worklog(message: str):
+def commit_and_add_worklog(message: str):
     pattern = r"^[A-Z]+-[0-9]+ [A-Za-z]+: .+$"
     if not re.match(pattern, message):
         logger.error("Invalid commit message format. Commit aborted.")
@@ -56,13 +56,13 @@ async def commit_and_add_worklog(message: str):
 
     jira = JIRAClient()
     tempo = TempoAPIClient()
-    started_at = get_last_commit_datetime()
+    started_at = get_last_commit_datetime(issue_key=jira_issue)
     if started_at is None:
         started_at = jira.extract_in_progress_transition_timestamp(jira_issue)
 
     time_spent = (datetime.now(tz=started_at.tzinfo) - started_at).total_seconds()
     try:
-        await tempo.add_worklog(
+        tempo.add_worklog(
             issue_id=jira.get_issue_id(jira_issue),
             account_id=jira.get_account_id(),
             description=commit_msg,

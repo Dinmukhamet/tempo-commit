@@ -1,6 +1,6 @@
 from datetime import datetime
 
-import httpx
+import requests
 
 from src.config import get_settings
 
@@ -10,7 +10,7 @@ settings = get_settings()
 class TempoAPIClient:
     BASE_URL = "https://api.tempo.io/4"
 
-    async def add_worklog(
+    def add_worklog(
         self,
         issue_id: int,
         account_id: str,
@@ -31,8 +31,7 @@ class TempoAPIClient:
             "timeSpentSeconds": time_spent,
         }
         headers = {"Authorization": f"Bearer {settings.tempo_api_token}"}
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"{self.BASE_URL}/worklogs", json=payload, headers=headers
-            )
-            response.raise_for_status()
+        response = requests.post(
+            f"{self.BASE_URL}/worklogs", json=payload, headers=headers
+        )
+        response.raise_for_status()

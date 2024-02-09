@@ -1,19 +1,27 @@
+import os
+from dataclasses import dataclass, fields
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(dotenv_path=BASE_DIR / ".env")
 
 
-class Settings(BaseSettings):
+@dataclass
+class Settings:
     jira_url: str = "https://jira.atlassian.com"
-    jira_email: str
-    jira_api_token: str
-    tempo_api_token: str
-    timezone: str = "Asia/Almaty"
+    jira_email: str = None
+    jira_api_token: str = None
+    tempo_api_token: str = None
 
-    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
+    def __post_init__(self):
+        for field in fields(self):
+            value = os.getenv(field.name.upper(), None)
+            if value is None and field.default is None:
+                raise ValueError(f"{field.name} is required.")
+            setattr(self, field.name, value)
 
 
 @lru_cache
