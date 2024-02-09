@@ -56,12 +56,15 @@ def commit_and_add_worklog(message: str):
 
     jira = JIRAClient()
     tempo = TempoAPIClient()
+    logger.info(f"Searching for latest commit with issue={jira_issue}...")
     started_at = get_last_commit_datetime(issue_key=jira_issue)
     if started_at is None:
+        logger.info("No commits found, using ticket transition timestamp.")
         started_at = jira.extract_in_progress_transition_timestamp(jira_issue)
 
     time_spent = (datetime.now(tz=started_at.tzinfo) - started_at).total_seconds()
     try:
+        logger.info("Adding worklog...")
         tempo.add_worklog(
             issue_id=jira.get_issue_id(jira_issue),
             account_id=jira.get_account_id(),
